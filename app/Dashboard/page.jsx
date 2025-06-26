@@ -2,6 +2,9 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import FileItem from '@/components/FileItem'
+import SearchBar from '@/components/SearchBar'
+import FolderItem from '@/components/FolderItem'
+import { signIn } from 'next-auth/react'
 
 export default function DashboardPage() {
     const [files, setFiles] = useState([])
@@ -11,7 +14,27 @@ export default function DashboardPage() {
     const userId = session?.user?.id;
 
     if (status === 'loading') return <p>Loading...</p>
-    if (!session) return <p>Please log in</p>
+    if (!session) {
+    return (
+        <div className="flex flex-col items-center justify-center h-screen text-center">
+        <h2 className="text-xl font-semibold mb-4">You must be logged in to view your dashboard.</h2>
+        <a
+            href="/login"
+            className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition"
+        >
+            Go to Login
+        </a>
+        </div>
+    )
+    }
+
+    const handleSearch = async (q) => {
+    if (!userId || !q) return
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&userId=${userId}`)
+        const data = await res.json()
+        setFiles(data.files || [])
+        setFolders(data.folders || [])
+    }
 
     useEffect(() => {
         const fetchFiles = async () => {
@@ -45,7 +68,7 @@ export default function DashboardPage() {
             </div>
 
             <CreateFolderForm userId={userId} onSuccess={fetchDataAgain} />
-
+            <SearchBar onSearch={handleSearch} />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {folders.map((folder) => (
                 <FolderItem key={folder.id} {...folder} />

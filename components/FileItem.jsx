@@ -1,3 +1,4 @@
+
 export default function FileItem({ id, name, type, url, onDelete }) {
     const isImage = type?.startsWith('image')
     const isPDF = type === 'application/pdf'

@@ -1,6 +1,15 @@
-// app/api/auth/[...nextauth]/route.js
-import NextAuth from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth({
+    providers: [
+        CredentialsProvider({
+        name: "Credentials",
+        credentials: { /* ... */ },
+        authorize(credentials) { /* ... */ }
+        }),
+    ],
+  // other config
+})
+
 export { handler as GET, handler as POST }
