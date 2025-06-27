@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A modern, responsive file storage application built with **Next.js App Router**, **PostgreSQL**, and **Tailwind CSS**, featuring:
 
-## Getting Started
+- ✅ User authentication via `next-auth`
+- ✅ Nested folder support
+- ✅ File upload, deletion, and search
+- ✅ PostgreSQL + Prisma ORM
+- ✅ Vercel & Render deployment
 
-First, run the development server:
+---
+
+## 🔗 Live Demo
+
+🌐 [View Application](https://my-drive-clone.vercel.app)
+
+---
+
+## 🧱 Tech Stack
+
+| Tech          | Usage                      |
+|---------------|----------------------------|
+| Next.js       | React framework (App Router) |
+| Prisma        | Database ORM               |
+| PostgreSQL    | Relational DB (Render)     |
+| Tailwind CSS  | UI Styling                 |
+| NextAuth.js   | Authentication             |
+| Vercel        | Frontend Hosting           |
+| Render        | PostgreSQL Hosting         |
+
+---
+
+## 🛠️ Features
+
+- 🔐 **Secure login & register system**
+- 🗂️ **Nested folders**
+- ⬆️ **Upload files to any folder**
+- 🔍 **Search files and folders**
+
+---
+
+## 📦 Installation (Local)
+
+### 1. Clone the repository
 
 ```bash
+git clone https://github.com/AIDELITE/my-drive-clone.git
+cd driveclone
+2. Install dependencies
+bash
+Copy
+Edit
+npm install
+3. Setup .env file
+Create a .env file in the root directory:
+
+env
+Copy
+Edit
+DATABASE_URL=postgresql://user:password@host:5432/driveclone
+NEXTAUTH_SECRET=your-random-secret
+NEXTAUTH_URL=http://localhost:3000
+Use the external connection string from your Render PostgreSQL instance.
+
+Generate a secret with:
+
+bash
+Copy
+Edit
+openssl rand -base64 32
+4. Setup Prisma & database
+bash
+Copy
+Edit
+npx prisma generate
+npx prisma migrate dev --name init
+To inspect the DB schema:
+
+bash
+Copy
+Edit
+npx prisma studio
+5. Run locally
+bash
+Copy
+Edit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Visit http://localhost:3000
