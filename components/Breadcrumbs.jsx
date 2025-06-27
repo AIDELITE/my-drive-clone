@@ -6,8 +6,6 @@ import { usePathname } from 'next/navigation'
 export default function Breadcrumbs({ folderNameMap = {} }) {
     const pathname = usePathname()
     const segments = pathname.split('/').filter(Boolean)
-
-    // Only show breadcrumbs for /dashboard/folderId/...
     if (!segments.includes('dashboard')) return null
 
     const crumbs = []

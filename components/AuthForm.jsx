@@ -3,149 +3,116 @@
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
-import Link from 'next/link'
 
 export default function AuthForm({ type = 'login' }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [submitting, setSubmitting] = useState(false)
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
     const router = useRouter()
-
-    const validateForm = () => {
-        if (!email || !password) {
-        toast.error('Email and password are required')
-        return false
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
-        toast.error('Enter a valid email')
-        return false
-        }
-
-        if (password.length < 6) {
-        toast.error('Password must be at least 6 characters')
-        return false
-        }
-
-        if (type === 'register' && password !== confirmPassword) {
-        toast.error('Passwords do not match')
-        return false
-        }
-
-        return true
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (!validateForm()) return
-        setSubmitting(true)
+        setError('')
+        setSuccess('')
 
-        if (type === 'login') {
+        if (type === 'register') {
+        if (password !== confirmPassword) {
+            setError('Passwords do not match')
+            return
+        }
+
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+            setError(data?.error || 'Registration failed')
+        } else {
+            setSuccess('Registration successful! You can now log in.')
+            setEmail('')
+            setPassword('')
+            setConfirmPassword('')
+        }
+        } else {
         const res = await signIn('credentials', {
             redirect: false,
             email,
             password,
         })
 
-        if (res?.error) {
-            toast.error('Invalid credentials')
-        } else {
-            toast.success('Logged in successfully!')
-            router.push('/dashboard')
+        if (res?.error) setError('Invalid credentials')
+        else router.push('/dashboard')
         }
-        } else {
-        // Register
-        try {
-            const res = await fetch('/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-            })
-
-            const data = await res.json()
-
-            if (data.success) {
-            toast.success('Account created! Redirecting to Dashboard')
-            await signIn('credentials', {
-                redirect: false,
-                email,
-                password,
-            })
-            router.push('/dashboard')
-            } else {
-            toast.error(data.message || 'Registration failed')
-            }
-        } catch (err) {
-            toast.error('Something went wrong')
-        }
-        }
-
-        setSubmitting(false)
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-md w-full">
-        <input
+        <div className="max-w-md w-full bg-white p-8 rounded shadow space-y-4">
+        <h2 className="text-2xl font-bold text-center text-gray-800">
+            {type === 'login' ? 'Login to your account' : 'Create an account'}
+        </h2>
+
+        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+        {success && <p className="text-sm text-green-600 text-center">{success}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input
             type="email"
             placeholder="Email"
+            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring focus:border-blue-300"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded"
-            required
-        />
-        <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded"
-            required
-        />
-
-        {type === 'register' && (
-            <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded"
             required
             />
-        )}
-
-        <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-            {submitting
-            ? type === 'login'
-                ? 'Logging in...'
-                : 'Registering...'
-            : type === 'login'
-            ? 'Log In'
-            : 'Register'}
-        </button>
-        <div className="text-sm text-center">
-            {type === 'login' ? (
-                <>
-                Don't have an account?{' '}
-                <Link href="/register" className="text-blue-600 hover:underline">
-                    Register
-                </Link>
-                </>
-            ) : (
-                <>
-                Already have an account?{' '}
-                <Link href="/login" className="text-blue-600 hover:underline">
-                    Log in
-                </Link>
-                </>
+            <input
+            type="password"
+            placeholder="Password"
+            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring focus:border-blue-300"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            />
+            {type === 'register' && (
+            <input
+                type="password"
+                placeholder="Confirm Password"
+                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring focus:border-blue-300"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+            />
             )}
-            </div>
+
+            <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+            >
+            {type === 'login' ? 'Log In' : 'Register'}
+            </button>
         </form>
+
+        <div className="text-center text-sm">
+            {type === 'login' ? (
+            <p>
+                Don’t have an account?{' '}
+                <a href="/register" className="text-blue-600 hover:underline">
+                Register
+                </a>
+            </p>
+            ) : (
+            <p>
+                Already have an account?{' '}
+                <a href="/login" className="text-blue-600 hover:underline">
+                Log In
+                </a>
+            </p>
+            )}
+        </div>
+        </div>
     )
 }
+

@@ -1,15 +1,5 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import NextAuth from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
-const handler = NextAuth({
-    providers: [
-        CredentialsProvider({
-        name: "Credentials",
-        credentials: { /* ... */ },
-        authorize(credentials) { /* ... */ }
-        }),
-    ],
-  // other config
-})
-
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

@@ -17,7 +17,6 @@ export default function UserMenu({ email, name }) {
             .toUpperCase()
         : email?.[0]?.toUpperCase()
 
-    // Close dropdown on outside click
     useEffect(() => {
         const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -30,7 +29,6 @@ export default function UserMenu({ email, name }) {
 
     return (
         <div className="relative flex flex-col items-end md:items-center space-y-2">
-        {/* Mobile Hamburger */}
         <div className="md:hidden">
             <button
             onClick={() => setIsOpen(!isOpen)}
@@ -40,7 +38,6 @@ export default function UserMenu({ email, name }) {
             </button>
         </div>
 
-        {/* Desktop & mobile user avatar + dropdown */}
         <div className={`${isOpen ? 'block' : 'hidden'} md:block`}>
             <div className="relative" ref={dropdownRef}>
             <button
@@ -53,7 +50,6 @@ export default function UserMenu({ email, name }) {
                 <span className="hidden md:inline text-gray-700">{email}</span>
             </button>
 
-            {/* Dropdown menu */}
             {menuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md z-10">
                 <form action="/api/auth/signout" method="POST">

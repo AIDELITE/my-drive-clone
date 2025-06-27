@@ -1,4 +1,3 @@
-// app/api/files/rename/route.js
 import db from '@/lib/db'
 import { NextResponse } from 'next/server'
 
